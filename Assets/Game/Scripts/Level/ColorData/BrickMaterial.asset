@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3663a410f9bdf754b9ac008fb137c61f, type: 3}
+  m_Name: BrickMaterial
+  m_EditorClassIdentifier: 
+  brickMat:
+  - {fileID: 2100000, guid: 7ca4701af32c3a943a68360d1ff2542b, type: 2}
+  - {fileID: 2100000, guid: edf3c35325d14864985f22eee0055995, type: 2}
+  - {fileID: 2100000, guid: b1a2a7d8339a5fa4397a692726ee8950, type: 2}
+  - {fileID: 2100000, guid: 3132e94859f3f61449c2beac1fed1e59, type: 2}
+  - {fileID: 2100000, guid: 98a73e50cae004c47806446dc2b16208, type: 2}
+  - {fileID: 2100000, guid: 078059310ce9fe246bd398984e426f52, type: 2}
+  - {fileID: 2100000, guid: f5fd46af7306c694da3be1c6a463330c, type: 2}
