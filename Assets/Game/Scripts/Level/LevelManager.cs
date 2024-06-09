@@ -4,168 +4,143 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : Singleton<LevelManager>
 {
-    public static LevelManager instance;
-
     [Header("GeneralSettings")]
-    [SerializeField] Character player;
-    [SerializeField] GameObject botPrefabs;
+    public EGameState eGameState;
+    [field: SerializeField] public Player Player { get; private set; }
+
+    [SerializeField] Bot botPrefabs;
     [SerializeField] Transform environmentTransform;
+    [SerializeField] BrickControl poolControl;
+
+    [Header("LightSettings")]
+    [SerializeField] Light sunLight;
+    [SerializeField] Vector2 intensityDayNight;
+    [SerializeField] Color dayColor;
+    [SerializeField] Color nightColor;
+    [SerializeField] Color ambientColor;
 
     [Header("MapSettings")]
     [SerializeField] List<MapManager> maps;
     [SerializeField] MapManager currentMap;
-    [SerializeField] int levelCount;
-    public int CurrentLevel => levelCount;
+    [field: SerializeField] public int LevelCount { get; private set; }
 
     [Header("MapData")]
-    [SerializeField] List<State> mapState;
-    public List<State> MapState => mapState;
-    [SerializeField] List<Bot> bots;
-    public List<Bot> Bots => bots;
-    [SerializeField] List<Transform> startBotTransforms;
-    [SerializeField] WinPos winPos;
-    [SerializeField] Transform startPlayerTransform;
-    public Transform StartPlayerTransform => startPlayerTransform;
-    [SerializeField] GameObject startBotPrefab;
+    [SerializeField] List<Transform> startBotTransforms = new List<Transform>();
+    [field: SerializeField] public WinPos WinPos { get; private set; }
+    [field: SerializeField] public List<State> MapState { get; private set; } = new List<State>();
+    [field: SerializeField] public List<Bot> Bots { get; private set; } = new List<Bot>();
+    [field: SerializeField] public Transform StartPlayerTransform { get; private set; }
 
-    // bot state machine
-    public static IStateBot idleState = new IdleBot();
-    public static IStateBot findBrickState = new FindBrickBot();
-    public static IStateBot buildBrickState = new BuildBrickBot();
-
-    bool endGameBool;
-
-    void Awake()
-    {
-        instance = this;
-    }
 
     void Start()
     {
-        levelCount = 0;
-        NewLevel(levelCount);
-    }
-
-    void Update()
-    {
-        if (mapState.Count > 0)
-        {
-            if (mapState[mapState.Count - 1].Bridges[0].StairsList.Count > 0)
-            {
-                if (!endGameBool && mapState[mapState.Count - 1].Bridges[0].StairsList[mapState[mapState.Count - 1].Bridges[0].StairsList.Count - 1].BrickType != ColorType.None)
-                {
-                    EndGame();
-                    endGameBool = true;
-                }
-            }
-        }
+        LevelCount = 0;
+        NewLevel(LevelCount);
+        UIManager.Instance.OpenUI<CanvasMainMenu>();
     }
 
     void OnInit()
     {
-        UIManager.instance.OnInit();
-        endGameBool = false;
-        player.OnInit();
+        Player.OnInit();
 
-        for (int i = 0; i < bots.Count; i++)
+        for (int i = 0; i < Bots.Count; i++)
         {
-            bots[i].transform.position = startBotTransforms[i].position;
-            bots[i].OnInit();
+            Bots[i].TF.position = startBotTransforms[i].position;
+            Bots[i].OnInit();
         }
     }
+
+    void ReadMap(int mapIndex)
+    {
+        switch(maps[mapIndex].MapLight)
+        {
+            case ELight.Day:
+                ChangeLight(ref sunLight, dayColor, intensityDayNight.x, ambientColor);
+                break;
+            case ELight.Night:
+                ChangeLight(ref sunLight, nightColor, intensityDayNight.y, Color.black);
+                break;
+        }
+        currentMap = Instantiate(maps[mapIndex], environmentTransform);
+        NavMesh.RemoveAllNavMeshData();
+        NavMesh.AddNavMeshData(maps[mapIndex].NavMeshData);
+        MapState = currentMap.MapState;
+        WinPos = currentMap.WinPos;
+        StartPlayerTransform = currentMap.StartPlayerTransform;
+        startBotTransforms = currentMap.StartBotTransforms;
+
+        for (int i = 0; i < startBotTransforms.Count; i++)
+        {
+            Bot tmpBot = Instantiate(botPrefabs, startBotTransforms[i].position, Quaternion.identity);
+            tmpBot.SetBrickType(i + 1);
+            tmpBot.SetMaterial(i + 1);
+            Bots.Add(tmpBot);
+        }
+    }
+
+    public void EndGame(Character winChar)
+    {
+        ChangeLight(ref sunLight, dayColor, intensityDayNight.x, ambientColor);
+        winChar.EndGame(Constant.ANIM_WIN, 0);
+        UIManager.Instance.CloseAll();
+        if (winChar.CompareTag(Constant.TAG_PLAYER))
+        {
+            UIManager.Instance.OpenUI<CanvasVictory>();
+        }
+        else
+        {
+            UIManager.Instance.OpenUI<CanvasFail>();
+            Player.EndGame(Constant.ANIM_LOSE, 1);
+        }
+    }
+
+    void ChangeLight(ref Light tmpLight, Color tmpColor, float tmpIntensity, Color tmpAmbient)
+    {
+        tmpLight.color = tmpColor;
+        tmpLight.intensity = tmpIntensity;
+        RenderSettings.ambientLight = tmpAmbient;
+    }
+
     void NewLevel(int levelIndex)
     {
+        SimplePool<EBrickType>.ReleaseAll();
+        poolControl.OnInit();
         if (currentMap != null)
         {
             Destroy(currentMap.gameObject);
-            for (int i = 0; i < bots.Count; i++)
+            for (int i = 0; i < Bots.Count; i++)
             {
-                Destroy(bots[i].gameObject);
+                Destroy(Bots[i].gameObject);
             }
-            bots.Clear();
-            mapState.Clear();
+            Bots.Clear();
+            MapState.Clear();
             startBotTransforms.Clear();
         }
         ReadMap(levelIndex);
         OnInit();
     }
-
-    void ReadMap(int mapIndex)
-    {
-        currentMap = Instantiate(maps[mapIndex], environmentTransform);
-        NavMesh.RemoveAllNavMeshData();
-        NavMesh.AddNavMeshData(maps[mapIndex].NavMeshData);
-        mapState = currentMap.MapState;
-        winPos = currentMap.WinPos;
-        startPlayerTransform = currentMap.StartPlayerTransform;
-        startBotPrefab = currentMap.StartBotPrefab;
-
-        foreach (Transform t in startBotPrefab.transform)
-        {
-            startBotTransforms.Add(t);
-        }
-        for (int i = 0; i < startBotTransforms.Count; i++)
-        {
-            GameObject tmpBotObj = Instantiate(botPrefabs, startBotTransforms[i].position, Quaternion.identity);
-            Bot tmpBot = tmpBotObj.GetComponent<Bot>();
-            tmpBot.SetBrickType(i + 1);
-            tmpBot.SetMaterial(i + 1);
-            bots.Add(tmpBot);
-        }
-    }
-
-    void EndGame()
-    {
-        Character winChar = mapState[mapState.Count - 1].Bridges[0].StairsList[mapState[mapState.Count - 1].Bridges[0].StairsList.Count - 1].CurrentChar;
-        CharEndgame("Win", ref winChar, 0);
-
-        if (winChar.CompareTag("Player"))
-        {
-            UIManager.instance.WinUIAni();
-
-        }
-        else
-        {
-            UIManager.instance.LoseUIAni();
-            CharEndgame("Lose", ref player, 1);
-        }
-        UIManager.instance.DiactiveJoyStick();
-    }
-
-    void CharEndgame(string animName, ref Character character, int place)
-    {
-        character.EndGame(animName);
-        character.transform.position = winPos.WinPoss[place].transform.position;
-        character.transform.forward = winPos.WinPoss[place].transform.forward;
-    }
-
     public void ResetLevel()
     {
-        NewLevel(levelCount);
+        NewLevel(LevelCount);
     }
 
     public void NextLevel()
     {
-        if (levelCount < maps.Count - 1)
+        if (LevelCount < maps.Count - 1)
         {
-            NewLevel(++levelCount);
+            NewLevel(++LevelCount);
         }
         else
         {
-            levelCount = 0;
+            LevelCount = 0;
             NewLevel(0);
         }
     }
-}
-public enum ColorType
-{
-    None = 0,
-    Red = 1,
-    Green = 2,
-    Blue = 3,
-    Yellow = 4,
-    Black = 5,
-    Pink = 6
+
+    public void SetState(EGameState state)
+    {
+        eGameState = state;
+    }
 }

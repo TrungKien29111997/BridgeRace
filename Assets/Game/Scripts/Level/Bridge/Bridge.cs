@@ -4,71 +4,80 @@ using UnityEngine;
 
 public class Bridge : MonoBehaviour
 {
-    [SerializeField] Transform wallPlayer;
-    [SerializeField] GameObject stairsGroup;
-    [SerializeField] List<Stairs> stairsList;
-    public List<Stairs> StairsList => stairsList;
-    Player player;
+    public Transform wallPlayer;
+    [field: SerializeField] public Door CurrentDoor { get; private set; }
+
+    [field: SerializeField] public List<Stair> Stairs { get; private set; }
+
+    Character player;
+    bool stopPlayer;
+
+    Transform tf;
+    public Transform TF
+    {
+        get
+        {
+            if (tf == null)
+            {
+                tf = transform;
+            }
+            return tf;
+        }
+    }
+
+    private void Awake()
+    {
+        for (int i = 0; i < Stairs.Count; i++)
+        {
+            Stairs[i].SetBridge(this);
+        }
+    }
 
     void Start()
     {
         player = null;
-        foreach (Transform t in stairsGroup.transform)
-        {
-            stairsList.Add(t.GetComponent<Stairs>());
-        }
+        stopPlayer = false;
     }
 
     void Update()
     {
+        //TODO: Fix => OK
         if (player != null)
         {
-            if (Vector3.Dot(player.transform.forward, transform.forward) > 0.5f)
+            if (Vector3.Dot(player.TF.forward, TF.forward) > 0.5f)
             {
-                for (int i = stairsList.Count - 1; i >= 0; i--)
+                if (stopPlayer)
                 {
-                    if (stairsList[i].BrickType == player.BrickType)
-                    {
-                        if (player.BrickLeft == 0)
-                        {
-                            wallPlayer.position = stairsList[i].transform.position;
-                            break;
-                        }
-                        else
-                        {
-                            wallPlayer.position = new Vector3(0, 5, 0);
-                            break;
-                        }
-                    }
+                    wallPlayer.position = player.TF.position + TF.forward * 0.3f;
+                    stopPlayer = false;
                 }
             }
-        }
-
-        if (stairsList[stairsList.Count - 1].ChangeColor)
-        {
-            for (int i = 0; i < LevelManager.instance.Bots.Count; i++)
+            else
             {
-                if (stairsList[stairsList.Count - 1].BrickType == LevelManager.instance.Bots[i].BrickType)
-                {
-                    LevelManager.instance.Bots[i].NextState();
-                }
+                wallPlayer.localPosition = new Vector3(0, 5, 0);
             }
         }
     }
 
+    public void BoolStopPlayer(bool tmpBool)
+    {
+        stopPlayer = tmpBool;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(Constant.TAG_PLAYER))
         {
-            player = other.GetComponent<Player>();
+            player = Cache.GetCharacter(other);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag(Constant.TAG_PLAYER))
         {
             player = null;
+            wallPlayer.localPosition = new Vector3(0, 5, 0);
         }
     }
 }

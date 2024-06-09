@@ -6,22 +6,30 @@ using UnityEngine;
 public class State : MonoBehaviour
 {
     [Header("BrickSpawnPosSetting")]
-    [SerializeField] GameObject spawnPosPrefab;
+    [SerializeField] BrickPos brickPosPrefab;
     [SerializeField] Vector2 offsetBricks;
     [SerializeField] Vector2Int numberBricks;
-    [SerializeField] Brick[] spawnPosArray;
-    public Brick[] SpawnPosArray => spawnPosArray;
+    [field: SerializeField] public BrickPos[] SpawnPosArray { get; private set; }
+    [field: SerializeField] public Bridge[] Bridges { get; private set; }
+    [field: SerializeField] public EBrickType BrickMissing { get; private set; }
 
-    [SerializeField] Bridge[] bridges;
-    public Bridge[] Bridges => bridges;
-
-    [SerializeField] ColorType brickMissing;
-    public ColorType BrickMissing => brickMissing;
     [SerializeField] ColorData colorData;
+
+    Transform tf;
+    public Transform TF
+    {
+        get
+        {
+            if (tf == null)
+            {
+                tf = transform;
+            }
+            return tf;
+        }
+    }
 
     [Header("BrickControlSetting")]
     [SerializeField] int[] bricksNum;
-
     [SerializeField] int redBricks;
     [SerializeField] int greenBricks;
     [SerializeField] int blueBricks;
@@ -31,14 +39,9 @@ public class State : MonoBehaviour
 
     void Start()
     {
-        spawnPosArray = new Brick[numberBricks.x * numberBricks.y];
+        SpawnPosArray = new BrickPos[numberBricks.x * numberBricks.y];
         bricksNum = new int[6];
         OnInit();
-    }
-
-    void Update()
-    {
-        BrickLeast();
     }
 
     void OnInit()
@@ -52,10 +55,10 @@ public class State : MonoBehaviour
         {
             for (int j = 0; j < numberBricks.y; j++)
             {
-                GameObject brickPos = Instantiate(spawnPosPrefab, transform);
-                brickPos.transform.localPosition = new Vector3(i * offsetBricks.x, 0, j * offsetBricks.y);
-                spawnPosArray[arrayLenght] = brickPos.GetComponent<Brick>();
-                spawnPosArray[arrayLenght].State = this;
+                BrickPos tmpBrickPos = Instantiate(brickPosPrefab, TF);
+                tmpBrickPos.TF.localPosition = new Vector3(i * offsetBricks.x, 0, j * offsetBricks.y);
+                SpawnPosArray[arrayLenght] = tmpBrickPos;
+                SpawnPosArray[arrayLenght].SetState(this);
                 arrayLenght++;
             }
         }
@@ -68,56 +71,58 @@ public class State : MonoBehaviour
         bricksNum[3] = yellowBricks;
         bricksNum[4] = blackBricks;
         bricksNum[5] = pinkBricks;
+
         Array.Sort(bricksNum);
 
         if (bricksNum[0] == redBricks)
         {
-            brickMissing = ColorType.Red;
+            BrickMissing = EBrickType.Red;
         }
         else if (bricksNum[0] == greenBricks)
         {
-            brickMissing = ColorType.Green;
+            BrickMissing = EBrickType.Green;
         }
         else if (bricksNum[0] == blueBricks)
         {
-            brickMissing = ColorType.Blue;
+            BrickMissing = EBrickType.Blue;
         }
         else if (bricksNum[0] == yellowBricks)
         {
-            brickMissing = ColorType.Yellow;
+            BrickMissing = EBrickType.Yellow;
         }
         else if (bricksNum[0] == blackBricks)
         {
-            brickMissing = ColorType.Black;
+            BrickMissing = EBrickType.Black;
         }
         else if (bricksNum[0] == pinkBricks)
         {
-            brickMissing = ColorType.Pink;
+            BrickMissing = EBrickType.Pink;
         }
     }
 
-    public void BrickNum(ColorType colorType, int parameter)
+    public void BrickNum(EBrickType colorType, int parameter)
     {
         switch(colorType)
         {
-            case ColorType.Red:
+            case EBrickType.Red:
                 redBricks += parameter;
                 break;
-            case ColorType.Green:
+            case EBrickType.Green:
                 greenBricks += parameter;
                 break;
-            case ColorType.Blue:
+            case EBrickType.Blue:
                 blueBricks += parameter;
                 break;
-            case ColorType.Yellow:
+            case EBrickType.Yellow:
                 yellowBricks += parameter;
                 break;
-            case ColorType.Black:
+            case EBrickType.Black:
                 blackBricks += parameter;
                 break;
-            case ColorType.Pink:
+            case EBrickType.Pink:
                 pinkBricks += parameter;
                 break;
         }
+        BrickLeast();
     }
 }

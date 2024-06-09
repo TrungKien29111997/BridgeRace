@@ -8,7 +8,7 @@ public class ColorData : ScriptableObject
     [Header("BrickMaterialSetting")]
     [SerializeField] List<Material> brickMat = new List<Material>();
 
-    public Material GetMaterial(ColorType colorType)
+    public Material GetMaterial(EBrickType colorType)
     {
         return brickMat[(int)colorType];
     }

@@ -5,16 +5,15 @@ using UnityEngine.AI;
 
 public class MapManager : MonoBehaviour
 {
-    [SerializeField] List<State> mapState;
-    public List<State> MapState => mapState;
-    [SerializeField] NavMeshData navMeshData;
-    public NavMeshData NavMeshData => navMeshData;
+    [field:SerializeField] public List<State> MapState { get; private set; }
 
-    [SerializeField] WinPos winPos;
-    public WinPos WinPos => winPos;
-    [SerializeField] Transform startPlayerTransform;
-    public Transform StartPlayerTransform => startPlayerTransform;
+    [field: SerializeField] public NavMeshData NavMeshData { get; private set; }
 
-    [SerializeField] GameObject startBotPrefab;
-    public GameObject StartBotPrefab => startBotPrefab;
+    [field: SerializeField] public WinPos WinPos { get; private set; }
+
+    [field: SerializeField] public Transform StartPlayerTransform { get; private set; }
+
+    [field: SerializeField] public List<Transform> StartBotTransforms { get; private set; }
+
+    [field: SerializeField] public ELight MapLight { get; private set; }
 }

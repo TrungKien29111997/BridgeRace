@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8150487412626194343}
   - component: {fileID: 8150487412626194342}
   - component: {fileID: 8150487412626194339}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Enemy
   m_TagString: Bot
   m_Icon: {fileID: 0}
@@ -102,23 +102,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 8150487412626194339}
-  brickType: 1
-  colorData: {fileID: 11400000, guid: 30b3d442f8c42544ab6a2780de9a73cf, type: 2}
-  brickPrefab: {fileID: 1828265218439479569, guid: 31c18578e3e81ab4797e5fd06eea9023, type: 3}
   moveSpeed: 3
-  spawnBrick: {fileID: 8035948461732441344}
-  brickCount: 0
-  bricksList: []
+  brickAtBack: {fileID: 8035948461732441344}
+  brickPrefab: {fileID: 939395403133126816, guid: 31c18578e3e81ab4797e5fd06eea9023, type: 3}
   brickOffset: 0.15
-  currentBrickState: {fileID: 0}
-  currentBrickStateIndex: 0
-  currentBrick: {fileID: 0}
-  maxBrickCarry: 5
-  bridgeSelected: 0
-  skinnedMesh:
+  <BrickType>k__BackingField: 0
+  colorData: {fileID: 11400000, guid: 30b3d442f8c42544ab6a2780de9a73cf, type: 2}
+  nav: {fileID: 8150487412626194337}
+  <SkinnedMesh>k__BackingField:
   - {fileID: 4928581469450992743}
   - {fileID: 2614600291887652416}
-  ecurrentState: 0
+  maxBrickCarry: 5
+  currentBrick: {fileID: 0}
 --- !u!95 &8150487412626194339
 Animator:
   serializedVersion: 5

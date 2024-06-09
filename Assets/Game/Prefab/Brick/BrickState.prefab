@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6945336860246427748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6945336860246427749}
+  - component: {fileID: 6945336860246427750}
+  m_Layer: 0
+  m_Name: BrickState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6945336860246427749
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6945336860246427748}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6945336860246427750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6945336860246427748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0ef5b7f603524740862809f426c7b7d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brickPosPrefab: {fileID: 8073834045832341137, guid: b717e6deb38596f4e91fba89c983bfe8, type: 3}
+  offsetBricks: {x: 0.8, y: 0.5}
+  numberBricks: {x: 5, y: 10}
+  <SpawnPosArray>k__BackingField: []
+  <Bridges>k__BackingField: []
+  <BrickMissing>k__BackingField: 0
+  colorData: {fileID: 11400000, guid: 30b3d442f8c42544ab6a2780de9a73cf, type: 2}
+  bricksNum: 
+  redBricks: 0
+  greenBricks: 0
+  blueBricks: 0
+  yellowBricks: 0
+  blackBricks: 0
+  pinkBricks: 0

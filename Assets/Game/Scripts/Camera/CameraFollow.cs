@@ -7,15 +7,27 @@ public class CameraFollow : MonoBehaviour
     Transform target;
     [SerializeField] Vector3 offset;
     public float lerpSpeed = 10;
-    // Start is called before the first frame update
-    void Start()
+
+    Transform tf;
+    public Transform TF
     {
-        target = FindObjectOfType<Player>().transform;
+        get
+        {
+            if (tf == null)
+            {
+                tf = transform;
+            }
+            return tf;
+        }
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void Start()
     {
-        transform.position = Vector3.Lerp(transform.position, target.position, Time.deltaTime * lerpSpeed);
+        target = GameObject.FindObjectOfType<Player>().transform;
+    }
+
+    void Update()
+    {
+        TF.position = Vector3.Lerp(TF.position, target.position, Time.deltaTime * lerpSpeed);
     }
 }

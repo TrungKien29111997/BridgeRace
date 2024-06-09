@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 246181472583209703}
   - component: {fileID: 8073834045832341137}
   - component: {fileID: 5529092153364363859}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EmptyObj
   m_TagString: Brick
   m_Icon: {fileID: 0}
@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: badadf81182150a45830c461d8a5bb99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: {fileID: 0}
-  brickPrefab: {fileID: 1828265218439479569, guid: 31c18578e3e81ab4797e5fd06eea9023, type: 3}
   colorData: {fileID: 11400000, guid: 30b3d442f8c42544ab6a2780de9a73cf, type: 2}
-  brickType: 0
+  <State>k__BackingField: {fileID: 0}
+  <Brick>k__BackingField: {fileID: 939395403133126816, guid: 31c18578e3e81ab4797e5fd06eea9023, type: 3}
+  <BrickType>k__BackingField: 0
 --- !u!65 &5529092153364363859
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -60,5 +60,5 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 0.3, y: 0.3, z: 0.3}
   m_Center: {x: 0, y: 0, z: 0}

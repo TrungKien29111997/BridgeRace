@@ -4,6 +4,5 @@ using UnityEngine;
 
 public class WinPos : MonoBehaviour
 {
-    [SerializeField] Transform[] winPoss;
-    public Transform[] WinPoss => winPoss;
+    [field: SerializeField] public Transform[] WinPoss { get; private set; }
 }
